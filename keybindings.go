@@ -38,9 +38,4 @@ func setKeyBindings(g *gocui.Gui) {
 	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, keyEnter); err != nil {
 		log.Panicln(err)
 	}
-
-	/* Main loop */
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Panicln(err)
-	}
 }

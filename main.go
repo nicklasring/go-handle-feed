@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
-	"os/exec"
 	"path"
 
 	"github.com/jroimartin/gocui"
@@ -83,30 +81,6 @@ func keyEnter(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func downloadFile(url string) error {
-	cmd := exec.Command("wget", url)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func transferFile(fileName string) error {
-	settings := getSettings()
-	remote := fmt.Sprintf("%s:%s", settings.API.Hostname, settings.API.RemotePath)
-	cmd := exec.Command("rsync", "-rvz", "--remove-sent-files", fileName, remote)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }
@@ -121,4 +95,9 @@ func main() {
 	g.Mouse = false
 	g.SetManagerFunc(layout)
 	setKeyBindings(g)
+
+	/* Main loop */
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+		log.Panicln(err)
+	}
 }
