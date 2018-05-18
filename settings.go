@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
 )
 
 type Settings struct {
@@ -18,7 +20,15 @@ type Settings struct {
 
 func getSettings() Settings {
 	var settings Settings
-	f, err := os.Open("settings.json")
+	var settingsFile string
+
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	settingsFile = fmt.Sprintf("%s/.feed-settings.json", usr.HomeDir)
+	f, err := os.Open(settingsFile)
 	if err != nil {
 		log.Fatal(err)
 	}
