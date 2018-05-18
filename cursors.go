@@ -35,7 +35,6 @@ func cursorUp(v *gocui.View, step int) error {
 	return nil
 }
 
-//Moves cursor in list one line down
 func cursorDown(v *gocui.View, step int) error {
 	if v != nil {
 		cx, cy := v.Cursor()
