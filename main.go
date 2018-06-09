@@ -4,12 +4,25 @@ import (
 	"fmt"
 	"log"
 	"path"
+	"strings"
 
 	"github.com/jroimartin/gocui"
 	"github.com/mmcdole/gofeed"
 )
 
 var links map[string]string
+
+func containsWantedCategories(categories []string) bool {
+	targets := []string{"HDRip", "Episodes", "Bluray", "WEBRip"}
+	for _, target := range targets {
+		for _, category := range categories {
+			if strings.Contains(category, target) {
+				return true
+			}
+		}
+	}
+	return false
+}
 
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
@@ -38,8 +51,10 @@ func layout(g *gocui.Gui) error {
 		feed, _ := fp.ParseURL(settings.API.URL)
 
 		for _, item := range feed.Items {
-			links[item.Title] = item.Link
-			fmt.Fprintf(v, "%s\n", item.Title)
+			if containsWantedCategories(item.Categories) {
+				links[item.Title] = item.Link
+				fmt.Fprintf(v, "%s\n", item.Title)
+			}
 		}
 	}
 	if v2, err := g.SetView("bottom", 0, maxY-5, maxX-1, maxY-1); err != nil {
